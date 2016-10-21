@@ -362,7 +362,7 @@
               <MiscControls></MiscControls>
               <Define>USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>.\CMSIS\CoreSupport;.\CMSIS\DeviceSupport\ST\STM32F10x;.\main;.\STM32F10x_StdPeriph_Driver\inc;.\main\bxCAN</IncludePath>
+              <IncludePath>..\CMSIS\DeviceSupport\ST\STM32F10x;..\main;.\STM32F10x_StdPeriph_Driver\inc;..\main\bxCAN;..\STM32F10x_StdPeriph_Driver\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -408,7 +408,7 @@
             <File>
               <FileName>startup_stm32f10x_md.s</FileName>
               <FileType>2</FileType>
-              <FilePath>.\CMSIS\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_md.s</FilePath>
+              <FilePath>..\CMSIS\DeviceSupport\ST\STM32F10x\startup\arm\startup_stm32f10x_md.s</FilePath>
             </File>
           </Files>
         </Group>
@@ -418,12 +418,12 @@
             <File>
               <FileName>system_stm32f10x.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\CMSIS\DeviceSupport\ST\STM32F10x\system_stm32f10x.c</FilePath>
+              <FilePath>..\CMSIS\DeviceSupport\ST\STM32F10x\system_stm32f10x.c</FilePath>
             </File>
             <File>
               <FileName>core_cm3.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\CMSIS\CoreSupport\core_cm3.c</FilePath>
+              <FilePath>..\CMSIS\CoreSupport\core_cm3.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -433,27 +433,27 @@
             <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\main\main.c</FilePath>
+              <FilePath>..\main\main.c</FilePath>
             </File>
             <File>
               <FileName>menu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\main\menu.c</FilePath>
-            </File>
-            <File>
-              <FileName>template.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\main\template.c</FilePath>
+              <FilePath>..\main\menu.c</FilePath>
             </File>
             <File>
               <FileName>menu_func.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\main\menu_func.c</FilePath>
+              <FilePath>..\main\menu_func.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_it.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\main\stm32f10x_it.c</FilePath>
+              <FilePath>..\main\stm32f10x_it.c</FilePath>
+            </File>
+            <File>
+              <FileName>template.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\main\template.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -461,44 +461,39 @@
           <GroupName>STM32F10x_StdPeriph_Driver</GroupName>
           <Files>
             <File>
-              <FileName>stm32f10x_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\STM32F10x_StdPeriph_Driver\src\stm32f10x_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\STM32F10x_StdPeriph_Driver\src\stm32f10x_rcc.c</FilePath>
-            </File>
-            <File>
               <FileName>stm32f10x_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\STM32F10x_StdPeriph_Driver\src\stm32f10x_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\STM32F10x_StdPeriph_Driver\src\stm32f10x_tim.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\STM32F10x_StdPeriph_Driver\src\stm32f10x_spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_bkp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\STM32F10x_StdPeriph_Driver\src\stm32f10x_bkp.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f10x_pwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\STM32F10x_StdPeriph_Driver\src\stm32f10x_pwr.c</FilePath>
+              <FilePath>..\STM32F10x_StdPeriph_Driver\src\stm32f10x_adc.c</FilePath>
             </File>
             <File>
               <FileName>stm32f10x_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\STM32F10x_StdPeriph_Driver\src\stm32f10x_dma.c</FilePath>
+              <FilePath>..\STM32F10x_StdPeriph_Driver\src\stm32f10x_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32F10x_StdPeriph_Driver\src\stm32f10x_exti.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32F10x_StdPeriph_Driver\src\stm32f10x_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_pwr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32F10x_StdPeriph_Driver\src\stm32f10x_pwr.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32F10x_StdPeriph_Driver\src\stm32f10x_rcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f10x_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\STM32F10x_StdPeriph_Driver\src\stm32f10x_tim.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -508,7 +503,7 @@
             <File>
               <FileName>1602driver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\main\1602driver.c</FilePath>
+              <FilePath>..\main\1602driver.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -518,7 +513,7 @@
             <File>
               <FileName>CAN.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\main\bxCAN\CAN.c</FilePath>
+              <FilePath>..\main\bxCAN\CAN.c</FilePath>
             </File>
           </Files>
         </Group>
