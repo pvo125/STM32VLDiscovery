@@ -1,0 +1,17 @@
+.\output\1602driver.o: main\1602driver.c
+.\output\1602driver.o: .\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x.h
+.\output\1602driver.o: .\CMSIS\CoreSupport\core_cm3.h
+.\output\1602driver.o: E:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\output\1602driver.o: .\CMSIS\DeviceSupport\ST\STM32F10x\system_stm32f10x.h
+.\output\1602driver.o: .\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x_conf.h
+.\output\1602driver.o: .\STM32F10x_StdPeriph_Driver\inc\stm32f10x_adc.h
+.\output\1602driver.o: .\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x.h
+.\output\1602driver.o: .\STM32F10x_StdPeriph_Driver\inc\stm32f10x_bkp.h
+.\output\1602driver.o: .\STM32F10x_StdPeriph_Driver\inc\stm32f10x_dma.h
+.\output\1602driver.o: .\STM32F10x_StdPeriph_Driver\inc\stm32f10x_fsmc.h
+.\output\1602driver.o: .\STM32F10x_StdPeriph_Driver\inc\stm32f10x_gpio.h
+.\output\1602driver.o: .\STM32F10x_StdPeriph_Driver\inc\stm32f10x_pwr.h
+.\output\1602driver.o: .\STM32F10x_StdPeriph_Driver\inc\stm32f10x_rcc.h
+.\output\1602driver.o: .\STM32F10x_StdPeriph_Driver\inc\stm32f10x_spi.h
+.\output\1602driver.o: .\STM32F10x_StdPeriph_Driver\inc\stm32f10x_tim.h
+.\output\1602driver.o: main\header.h
