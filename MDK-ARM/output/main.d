@@ -1,9 +1,9 @@
 .\output\main.o: ..\main\main.c
 .\output\main.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x.h
-.\output\main.o: E:\Keil\ARM\CMSIS\Include\core_cm3.h
-.\output\main.o: E:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\output\main.o: E:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\output\main.o: E:\Keil\ARM\CMSIS\Include\core_cmFunc.h
+.\output\main.o: D:\Keil\ARM\CMSIS\Include\core_cm3.h
+.\output\main.o: D:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\output\main.o: D:\Keil\ARM\CMSIS\Include\core_cmInstr.h
+.\output\main.o: D:\Keil\ARM\CMSIS\Include\core_cmFunc.h
 .\output\main.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\system_stm32f10x.h
 .\output\main.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x_conf.h
 .\output\main.o: ..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_adc.h
@@ -17,3 +17,4 @@
 .\output\main.o: ..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_spi.h
 .\output\main.o: ..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_tim.h
 .\output\main.o: ..\main\header.h
+.\output\main.o: ..\main\bxCAN\CAN.h

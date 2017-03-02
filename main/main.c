@@ -1,11 +1,16 @@
 #include <stm32f10x.h>
 #include "header.h"
+#include "CAN.h"
 
+#define FLAG_STATUS_PAGE	0x08002000
 
 Time_Type 								Time;
 Alarm_Type 								Alarm;
 
 volatile BUTTON_TypeDef		button=BUTTON_DISABLE;
+extern volatile uint8_t write_flashflag;
+extern void Flash_page_erase(uint32_t address,uint8_t countpage);
+extern void Flash_prog(uint16_t * src,uint16_t * dst,uint32_t nbyte);
 
 Count_Type 								CNT;
 
@@ -21,17 +26,24 @@ void ADC1_Init (void);
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int main (void){ 
+	uint16_t count;
+	uint16_t flag=0x00A7;
 	
 	InitPerifery ();
 	ADC1_Init();
 	LCDInit();
 	DateCalc();
-	AlarmCalc();	
+	AlarmCalc();
+	bxCAN_Init();
+	
+	DBGMCU->CR|=DBGMCU_CR_DBG_SLEEP;
+	DBGMCU->CR|= DBGMCU_CR_DBG_STOP;
+	
 	EXTI->IMR	= EXTI_IMR_MR17|EXTI_IMR_MR1|EXTI_IMR_MR2|EXTI_IMR_MR3;
-	if(Error_LSE==1)
+	/*if(Error_LSE==1)
 	{	PutText (OSC32_Failed,0x0);
 		Delay(1000000);
-	ClearLCD();}
+	ClearLCD();}*/
 	while(1)
 	{
 		
@@ -49,13 +61,48 @@ int main (void){
 			else
 				PutSimvol('P',0x4F);
 		}
+		else
+		{
+			PutSimvol(' ',0x4F);
+		}
 		NVIC->ISER[0]=NVIC_ISER_SETENA_7|NVIC_ISER_SETENA_9|NVIC_ISER_SETENA_29;		
 		if(Enable_Sleep==1) 
+		{	
+			
 			Sleepdeep();
+		}
 		if(button==BUTTON_SET) 
 			_Menu();
+		if(write_flashflag)
+		{
+					// проверим флаг  в секторе FLAG_STATUS во флэш.
+			count=0;
+			while(*(uint16_t*)(FLAG_STATUS_PAGE+count)!=0xFFFF)		// Перебираем байты пока не дойдем до неписанного поля 0xFF 
+			{
+			count+=2;
+			if(count>=2048)
+				{
+					count=0;
+					
+#ifdef MEDIUM_DENSITY			
+				Flash_page_erase(FLAG_STATUS_PAGE,2);
+#else	
+				Flash_page_erase(FLAG_STATUS_PAGE,1);
+#endif				
+				break;
+				}
+			}
+				
+			Flash_prog((uint16_t*)&flag,(uint16_t*)(FLAG_STATUS_PAGE+count),2);
+			SysTick->LOAD=(2500000*4);
+			SysTick->VAL=0;
+			while(!(SysTick->CTRL&SysTick_CTRL_COUNTFLAG_Msk)){}	
+			NVIC_SystemReset();
+		}
+	
 	}
 }	
+
 
 void ADC1_Init (void){
 		uint8_t i;
@@ -158,11 +205,11 @@ void InitPerifery(void){
 				RCC->BDCR &=~ RCC_BDCR_BDRST;																	// Снимим сброс с BKP  домена 
 				RCC->BDCR |= RCC_BDCR_LSEON;																	// Включим 	усилитель кварца 32768		
 																																			// Дождемся установки бита готовности LSERDY
-				SysTick->LOAD=16000000;
-				SysTick->VAL=0;
-				while(!((SysTick->CTRL&SysTick_CTRL_COUNTFLAG_Msk)||(RCC->BDCR&RCC_BDCR_LSERDY))){}	/*Ждем установки LSERDY или примерно 1.5 сек*/
-				if(RCC->BDCR&RCC_BDCR_LSERDY)																		/*Если флаг установился настраиваем RTC*/	
-					{
+				//SysTick->LOAD=16000000;
+				//SysTick->VAL=0;
+				while((RCC->BDCR&RCC_BDCR_LSERDY)!=RCC_BDCR_LSERDY){}	//while(!((SysTick->CTRL&SysTick_CTRL_COUNTFLAG_Msk)||(RCC->BDCR&RCC_BDCR_LSERDY))){}	/*Ждем установки LSERDY или примерно 1.5 сек*/
+				//if(RCC->BDCR&RCC_BDCR_LSERDY)																		/*Если флаг установился настраиваем RTC*/	
+				//	{
 					RCC->BDCR |= RCC_BDCR_RTCSEL_LSE;
 					RCC->BDCR|=RCC_BDCR_RTCEN;
 					while ((RTC->CRL & RTC_CRL_RTOFF)!= RTC_CRL_RTOFF){}					// Дождемся готовности часов для записи
@@ -172,8 +219,8 @@ void InitPerifery(void){
 					RTC->ALRL =0x8280;	
 					RTC->CRL &=~ RTC_CRL_CNF;																		
 					while ((RTC->CRL & RTC_CRL_RTOFF)!= RTC_CRL_RTOFF){}					// Дождемся готовности часов для записи
-					}
-				else																														// Если флаг не установился настроим часы от HSE
+				//	}
+				/*else																														// Если флаг не установился настроим часы от HSE
 					{
 					RCC->BDCR |= RCC_BDCR_RTCSEL_HSE;															// Выберем в качестве источника генератор HSE 
 					RCC->BDCR |= RCC_BDCR_RTCEN;
@@ -185,7 +232,7 @@ void InitPerifery(void){
 					RTC->CRL &=~ RTC_CRL_CNF;																		
 					while ((RTC->CRL & RTC_CRL_RTOFF)!= RTC_CRL_RTOFF){}
 						Error_LSE=1;																								// Переменнная-флаг для индикации ошибки не запуска	LSE
-					}
+					}*/
 				RTC->CRL &=~RTC_CRL_RSF;																			// После запуска часов сбросим флаг RSF	
 				while ((RTC->CRL &RTC_CRL_RSF)!=RTC_CRL_RSF){}								// И дождемся его аппаратной установки
 					
@@ -200,11 +247,12 @@ void InitPerifery(void){
 //																									GPIO Initialization		
 
 // Включим тактирование GPIOA, B, C  AFIO USART1, TIM2
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_CRC,ENABLE);
 	RCC->APB2ENR |= RCC_APB2ENR_AFIOEN|
 									RCC_APB2ENR_IOPAEN|
 									RCC_APB2ENR_IOPBEN|
-									RCC_APB2ENR_IOPCEN|
-									RCC_APB2ENR_IOPDEN
+									RCC_APB2ENR_IOPCEN
+									/*RCC_APB2ENR_IOPDEN*/
 									/*RCC_APB2ENR_USART1EN*/;
 										
 	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
@@ -249,9 +297,10 @@ void InitPerifery(void){
 	GPIOC->CRH |= GPIO_CRH_MODE8_0|GPIO_CRH_MODE9_0|GPIO_CRH_MODE10_0|GPIO_CRH_MODE11_0;
 	GPIOC->CRH &=~ GPIO_CRH_CNF8_0 &~GPIO_CRH_CNF9_0 &~GPIO_CRH_CNF10_0 &~GPIO_CRH_CNF11_0;
 	
-	// Включим транзистор управляющий питанием и подсветкой LCD с ножки порта PC6 
-	GPIOC->CRL |=GPIO_CRL_MODE6_1;
-	GPIOC->BSRR =GPIO_BSRR_BR6;
+	// Включим транзистор управляющий питанием и подсветкой LCD с ножки порта PC7
+	GPIOC->CRL |=GPIO_CRL_MODE7_0;
+	GPIOC->BSRR =GPIO_BSRR_BR7;
+	
 //---------------------------------------------------------------------------------------------------------------------
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //																					EXTI Initialization

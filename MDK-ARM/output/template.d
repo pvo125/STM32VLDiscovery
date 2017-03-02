@@ -1,9 +1,9 @@
 .\output\template.o: ..\main\template.c
 .\output\template.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x.h
-.\output\template.o: E:\Keil\ARM\CMSIS\Include\core_cm3.h
-.\output\template.o: E:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\output\template.o: E:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\output\template.o: E:\Keil\ARM\CMSIS\Include\core_cmFunc.h
+.\output\template.o: D:\Keil\ARM\CMSIS\Include\core_cm3.h
+.\output\template.o: D:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\output\template.o: D:\Keil\ARM\CMSIS\Include\core_cmInstr.h
+.\output\template.o: D:\Keil\ARM\CMSIS\Include\core_cmFunc.h
 .\output\template.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\system_stm32f10x.h
 .\output\template.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x_conf.h
 .\output\template.o: ..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_adc.h

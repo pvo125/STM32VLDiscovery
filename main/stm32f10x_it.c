@@ -6,13 +6,16 @@ extern Time_Type 									Time;
 extern volatile BUTTON_TypeDef		button;
 extern Count_Type 								CNT;
 
+volatile uint8_t timesleep=0;	
 
 void RTC_IRQHandler (void){															// Функция Вычисления времени. Каждое прерывание от секунд	
 	int tmp, tmp1;																				// будем вычислять часы-минуты -секунды и обновлять соответ. ячейки памяти.
+	
+		
 		tmp=(RTC->CNTH<<16)|RTC->CNTL;
 		tmp %= 86400;		
-	if (tmp==0)																			// Если настала полночь
-		DateCalc();																	// то "сбегаем" обновим дату в соотв. ячейках памяти.
+		if (tmp==0)																			// Если настала полночь
+			DateCalc();																	// то "сбегаем" обновим дату в соотв. ячейках памяти.
 	
 	// Вычисленное время запишем в соотв. ячейки памяти чтобы выйдя из прерывания отображать текущее время на экране 	
 	  Time.time[0] =((tmp/3600)/10)|0x30;
@@ -23,10 +26,19 @@ void RTC_IRQHandler (void){															// Функция Вычисления
 		Time.time[6] =(tmp1 %60)/10 | 0x30;
 	  Time.time[7] = ((tmp1%60)%10) |0x30;
 		RTC->CRL &=~RTC_CRL_SECF;
+		
+		timesleep++;
+		if(timesleep>30)
+		{
+			timesleep=0;
+			Enable_Sleep=1;
+			SCB->SCR |=SCB_SCR_SLEEPDEEP;
+		}
+	
 }
 
 void EXTI1_IRQHandler (void){ 													// Функция перевода STM32 в режим Standby
-	EXTI->PR=EXTI_PR_PR1;
+	
 	if(Enable_Sleep==1)
 	{
 	SystemInit();
@@ -34,17 +46,19 @@ void EXTI1_IRQHandler (void){ 													// Функция перевода ST
 	}
 	else
 		SCB->SCR |=SCB_SCR_SLEEPDEEP;
+	
 	Delay(300000);	
 	Enable_Sleep =!Enable_Sleep;
 	
-	
+	EXTI->PR=EXTI_PR_PR1;
+		
 }	
 void EXTI3_IRQHandler(void){
 	
-	EXTI->PR=EXTI_PR_PR3;
+	
 	Delay(300000);
 	button=BUTTON_SET;
-
+	EXTI->PR=EXTI_PR_PR3;
 
 }	
 
@@ -181,6 +195,7 @@ void CAN1_RX1_IRQHandler(void){
 	
 	CAN_Receive_IRQHandler(1);
 	CAN_RXProcess1();
+	timesleep=0;
 	
 }
 

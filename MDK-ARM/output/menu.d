@@ -1,9 +1,9 @@
 .\output\menu.o: ..\main\menu.c
 .\output\menu.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x.h
-.\output\menu.o: E:\Keil\ARM\CMSIS\Include\core_cm3.h
-.\output\menu.o: E:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\output\menu.o: E:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\output\menu.o: E:\Keil\ARM\CMSIS\Include\core_cmFunc.h
+.\output\menu.o: D:\Keil\ARM\CMSIS\Include\core_cm3.h
+.\output\menu.o: D:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\output\menu.o: D:\Keil\ARM\CMSIS\Include\core_cmInstr.h
+.\output\menu.o: D:\Keil\ARM\CMSIS\Include\core_cmFunc.h
 .\output\menu.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\system_stm32f10x.h
 .\output\menu.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x_conf.h
 .\output\menu.o: ..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_adc.h

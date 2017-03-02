@@ -1,9 +1,9 @@
 .\output\1602driver.o: ..\main\1602driver.c
 .\output\1602driver.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x.h
-.\output\1602driver.o: E:\Keil\ARM\CMSIS\Include\core_cm3.h
-.\output\1602driver.o: E:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\output\1602driver.o: E:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\output\1602driver.o: E:\Keil\ARM\CMSIS\Include\core_cmFunc.h
+.\output\1602driver.o: D:\Keil\ARM\CMSIS\Include\core_cm3.h
+.\output\1602driver.o: D:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\output\1602driver.o: D:\Keil\ARM\CMSIS\Include\core_cmInstr.h
+.\output\1602driver.o: D:\Keil\ARM\CMSIS\Include\core_cmFunc.h
 .\output\1602driver.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\system_stm32f10x.h
 .\output\1602driver.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x_conf.h
 .\output\1602driver.o: ..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_adc.h

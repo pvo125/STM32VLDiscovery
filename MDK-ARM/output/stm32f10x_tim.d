@@ -1,10 +1,10 @@
 .\output\stm32f10x_tim.o: ..\STM32F10x_StdPeriph_Driver\src\stm32f10x_tim.c
 .\output\stm32f10x_tim.o: ..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_tim.h
 .\output\stm32f10x_tim.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x.h
-.\output\stm32f10x_tim.o: E:\Keil\ARM\CMSIS\Include\core_cm3.h
-.\output\stm32f10x_tim.o: E:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\output\stm32f10x_tim.o: E:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\output\stm32f10x_tim.o: E:\Keil\ARM\CMSIS\Include\core_cmFunc.h
+.\output\stm32f10x_tim.o: D:\Keil\ARM\CMSIS\Include\core_cm3.h
+.\output\stm32f10x_tim.o: D:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\output\stm32f10x_tim.o: D:\Keil\ARM\CMSIS\Include\core_cmInstr.h
+.\output\stm32f10x_tim.o: D:\Keil\ARM\CMSIS\Include\core_cmFunc.h
 .\output\stm32f10x_tim.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\system_stm32f10x.h
 .\output\stm32f10x_tim.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x_conf.h
 .\output\stm32f10x_tim.o: ..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_adc.h

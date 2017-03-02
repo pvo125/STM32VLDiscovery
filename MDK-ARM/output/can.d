@@ -1,9 +1,9 @@
 .\output\can.o: ..\main\bxCAN\CAN.c
 .\output\can.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x.h
-.\output\can.o: E:\Keil\ARM\CMSIS\Include\core_cm3.h
-.\output\can.o: E:\Keil\ARM\ARMCC\bin\..\include\stdint.h
-.\output\can.o: E:\Keil\ARM\CMSIS\Include\core_cmInstr.h
-.\output\can.o: E:\Keil\ARM\CMSIS\Include\core_cmFunc.h
+.\output\can.o: D:\Keil\ARM\CMSIS\Include\core_cm3.h
+.\output\can.o: D:\Keil\ARM\ARMCC\bin\..\include\stdint.h
+.\output\can.o: D:\Keil\ARM\CMSIS\Include\core_cmInstr.h
+.\output\can.o: D:\Keil\ARM\CMSIS\Include\core_cmFunc.h
 .\output\can.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\system_stm32f10x.h
 .\output\can.o: ..\CMSIS\DeviceSupport\ST\STM32F10x\stm32f10x_conf.h
 .\output\can.o: ..\STM32F10x_StdPeriph_Driver\inc\stm32f10x_adc.h

@@ -1,7 +1,8 @@
 #include <stm32f10x.h>
 #include "header.h"
+#include "CAN.h"
 
-
+extern CANTX_TypeDef CAN_Data_TX;
 extern Time_Type Time;
 extern Alarm_Type Alarm;
 

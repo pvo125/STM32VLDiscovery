@@ -296,16 +296,24 @@ void Cursor_type(uint32_t type){
 //
 void Sleepdeep (void) {
 
+			//NVIC_DisableIRQ(USB_LP_CAN1_RX0_IRQn);
+		  //NVIC_DisableIRQ(CAN1_RX1_IRQn);
+		
+			
 			ClearLCD();
 			PutText (GoodBye,0x5);
 			Delay(1000000);
 			GPIOB->BSRR=GPIO_BSRR_BR8;
-			GPIOC->BSRR=GPIO_BSRR_BR10|
-									GPIO_BSRR_BS6;
-			EXTI->IMR&=~EXTI_IMR_MR2&~EXTI_IMR_MR3;
+			GPIOC->BSRR=GPIO_BSRR_BR10;
+			GPIOC->BSRR=GPIO_BSRR_BS7;
+			EXTI->IMR&=~(EXTI_IMR_MR2|EXTI_IMR_MR3);
 			__WFE();
-			GPIOC->BSRR =GPIO_BSRR_BR6;
+			GPIOC->BSRR =GPIO_BSRR_BR7;
 			LCDInit();
+			
 			EXTI->IMR|=EXTI_IMR_MR1|EXTI_IMR_MR2|EXTI_IMR_MR3;
-			RTC->CRH |= RTC_CRH_SECIE;
+			//RTC->CRH |= RTC_CRH_SECIE;
+	
+			//NVIC_EnableIRQ(USB_LP_CAN1_RX0_IRQn);
+			//NVIC_EnableIRQ(CAN1_RX1_IRQn);
 }
