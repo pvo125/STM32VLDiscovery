@@ -5,13 +5,12 @@
 CANTX_TypeDef CAN_Data_TX;
 CANRX_TypeDef CAN_Data_RX[2];
 
-//extern TimeAlarm_TypeDef  Time,Alarm;
 extern Time_Type 								Time;
 extern Alarm_Type 							Alarm;
-volatile uint8_t write_flashflag=0;
 
 volatile uint32_t count;
 volatile int size_firmware;
+volatile uint8_t write_flashflag=0;
 
 #define FIRM_WORK_PAGE 		0x08002800		// page 10 for MD or 5 for HD		firmware work base
 
@@ -28,6 +27,11 @@ volatile int size_firmware;
 	#define NETNAME_INDEX  02   //F103_KIT
 #endif
 
+#define LEDPIN							GPIO_Pin_9
+#define LEDPORT						  GPIOC
+#define GPIO_BSRR_BRx 			GPIO_BSRR_BR9
+#define GPIO_BSRR_BSx 			GPIO_BSRR_BS9
+#define GPIO_IDR_IDRX       GPIO_IDR_IDR9
 void Flash_unlock(void);
 void Flash_page_erase(uint32_t address,uint8_t countpage);
 void Flash_prog(uint16_t * src,uint16_t * dst,uint32_t nbyte);
@@ -60,11 +64,6 @@ void bxCAN_Init(void){
 	NVIC_SetPriority( USB_LP_CAN1_RX0_IRQn,1);
 	NVIC_SetPriority(CAN1_RX1_IRQn, 1);
 	
-
-//			Init mode				//
-
-	//CAN1->MCR|=CAN_MCR_RESET;
-	
 	/*Exit SLEEP mode*/
 	CAN1->MCR&=~CAN_MCR_SLEEP;
 	/*Enter Init mode bxCAN*/
@@ -85,10 +84,8 @@ void bxCAN_Init(void){
 
 	CAN1->BTR|=CAN_BTR_BRP&23;																		/* tq=(23+1)*tPCLK1= 2/3 uS  */
 	CAN1->BTR|=0x01000000;																				/*SJW[1:0]=1  (SJW[1:0]+1)*tq=tRJW	PROP_SEG =+- 2* tq	 */		
-	
 	CAN1->BTR&=~CAN_BTR_TS1;
 	CAN1->BTR|=0x00070000;																				/* TS1[3:0]=0X07  tBS1=tq*(7+1)=8*tq */
-	
 	CAN1->BTR&=~CAN_BTR_TS2;
 	CAN1->BTR|=0x00200000;																				/* TS2[2:0]=0X02  tBS2=tq*(2+1)=3*tq */
 																																// | 1tq |  		8tq  |  	3tq| 		T= 12*tq= 8 uS f=125kHz
@@ -133,7 +130,7 @@ void bxCAN_Init(void){
 	CAN1->sFilterRegister[5].FR1=0x10F010E0;	//Filters bank 5 fmi 08 ID=0x087 IDE=0 RTR=0	 
 																						//							 fmi 09 ID=0x087 IDE=0 RTR=1	
 	CAN1->sFilterRegister[5].FR2=0x11101100;	//Filters bank 5 fmi 10 ID=0x088 IDE=0 RTR=0	//  
-																						//							 fmi 11 ID=0x088 IDE=0 RTR=1	// 	GET_NET_NAME																			
+																						//							 fmi 11 ID=0x088 IDE=0 RTR=1	// 	GET_NETNAME																			
 	
 	/* Filters activation  */	
 	CAN1->FA1R|=CAN_FFA1R_FFA0|CAN_FFA1R_FFA1|CAN_FFA1R_FFA2|
@@ -331,38 +328,19 @@ void CAN_RXProcess0(void){
 			BrezErr=0;
 			TimerONOFF=0;
 		break;
-		case 8://(id=384 data get alarm_a)
-		//
 		
-		break;
-		case 10://(id=385 data set alarm_a)
-		//
-		
-		
-		break;
-		case 11://(id=385 remote disable alarm_a)
-		//
-		
-		
-		break;
 		default:
 		break;	
-	
 	}
 
 	/*Разрешение прерываний FIFO0 */
 	CAN1->IER|=CAN_IER_FMPIE0;
-	//new_message=0;
-
+	
 }	
 
-/*
-*
-*/
 /*****************************************************************************************************************
 *													CAN_RXProcess1
 ******************************************************************************************************************/
-
 void CAN_RXProcess1(void){
 	uint8_t temp;
 	uint32_t crc;
@@ -402,10 +380,7 @@ void CAN_RXProcess1(void){
 		CAN_Transmit_DataFrame(&CAN_Data_TX);
 		
 		break;
-		case 5://(id=471 remote )
-		//
-		break;
-		case 6://(id=473 DOWNLOAD_FIRMWARE)
+		case 6://(id=473 DOWNLOAD_FIRMWARE data)
 			if((size_firmware-count)>=8)
 			{
 				Flash_prog((uint16_t*)&CAN_Data_RX[1].Data[0],(uint16_t*)(FIRM_UPD_PAGE+count),8);		
@@ -418,10 +393,10 @@ void CAN_RXProcess1(void){
 				
 				if((count%240)==0)
 				{	
-					if(GPIOC->IDR & GPIO_IDR_IDR9)
-						GPIOC->BSRR=GPIO_BSRR_BR9;
+					if(LEDPORT->IDR & GPIO_IDR_IDRX)
+						LEDPORT->BSRR=GPIO_BSRR_BRx;
 					else
-						GPIOC->BSRR=GPIO_BSRR_BS9;	
+						LEDPORT->BSRR=GPIO_BSRR_BSx;	
 				}
 			}
 			else 
@@ -443,8 +418,6 @@ void CAN_RXProcess1(void){
 					CAN_Transmit_DataFrame(&CAN_Data_TX);
 					
 					write_flashflag=1;
-					
-					
 				}
 				else
 				{
@@ -458,10 +431,7 @@ void CAN_RXProcess1(void){
 				}
 			}
 		break;
-		case 7://(id=487 remote disable alarm_b)
-		//
-		break;
-		case 11://(id=088 remote get net name)
+		case 11://(id=088 GET_NETNAME remote )
 		//
 		/*if((GPIOC->IDR & GPIO_IDR_IDR8)==GPIO_IDR_IDR8)
 			GPIOC->BSRR=GPIO_BSRR_BR8;

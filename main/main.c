@@ -193,8 +193,8 @@ void InitPerifery(void){
 	
 		RCC->APB1ENR |= RCC_APB1ENR_BKPEN | RCC_APB1ENR_PWREN;						// Включим тактирование BKP и PWR интерфейса  
 		PWR_BackupAccessCmd(ENABLE);																					// Разрешим доступ к бэкап домену установкой бита DBP
-		// Настроим SysTick сбросим флаг CLKSOURCE выберем источник тактирования AHB/8
-	
+		
+	// Настроим SysTick сбросим флаг CLKSOURCE выберем источник тактирования AHB/8
 	SysTick->CTRL &=~SysTick_CTRL_CLKSOURCE;
 	SysTick->CTRL |=SysTick_CTRL_ENABLE_Msk;	
 	
@@ -415,10 +415,7 @@ void InitPerifery(void){
 	
 	NVIC_EnableIRQ(DMA1_Channel2_IRQn);
 	NVIC_SetPriority(DMA1_Channel2_IRQn,1);	
-	//NVIC_EnableIRQ(RTCAlarm_IRQn);
-	//NVIC_SetPriority(RTCAlarm_IRQn,3);			//Приоритет ALARM=3
-	/*NVIC_EnableIRQ(SPI1_IRQn);
-	NVIC_SetPriority(SPI1_IRQn,2);	*/		//Приоритет SPI1=2
+	
 }
 
 void DateCalc(void){																		// Функция Вычисления даты по значению секунд 
