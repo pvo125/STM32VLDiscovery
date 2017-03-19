@@ -1,6 +1,8 @@
 #include <stm32f10x.h>
 #include "header.h"
 //
+extern Time_Type 								Time;
+
 void Delay (uint32_t ticks){														// Функция задержки на таймере SysTick
 	SysTick->LOAD=(ticks*9);
 	SysTick->VAL=0;
@@ -294,6 +296,28 @@ void Cursor_type(uint32_t type){
 }
 
 //
+void Refresh_LCD(uint8_t cmd){
+	
+	ClearLCD();
+	switch (cmd)
+		{	
+		case 0:
+			PutChar (&Time.time[0],0x0,8);
+			if((BKP->DR1<<16|BKP->DR2)>=(RTC->CNTH<<16|RTC->CNTL))
+				PutSimvol (0xEB,0xF);
+			else 	
+				PutSimvol (0x20,0xF);
+			PutChar (&Time.date[0],0x40,10);
+		break;
+		case 1:
+			PutText(Vin, 0x0);
+			PutChar(ADC_Ch_0,0xA,5);
+			PutText(Tchip, 0x40);
+			PutChar(Temperature,0x4A,5);
+		break;	
+		}
+}
+
 void Sleepdeep (void) {
 
 			//NVIC_DisableIRQ(USB_LP_CAN1_RX0_IRQn);

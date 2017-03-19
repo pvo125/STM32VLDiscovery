@@ -6,11 +6,12 @@ extern Time_Type 									Time;
 extern volatile BUTTON_TypeDef		button;
 extern Count_Type 								CNT;
 
+extern volatile uint8_t refresh_lcd;
 volatile uint8_t timesleep=0;	
 
 void RTC_IRQHandler (void){															// Функция Вычисления времени. Каждое прерывание от секунд	
 	int tmp, tmp1;																				// будем вычислять часы-минуты -секунды и обновлять соответ. ячейки памяти.
-	
+	static uint8_t count_refresh=0;
 		
 		tmp=(RTC->CNTH<<16)|RTC->CNTL;
 		tmp %= 86400;		
@@ -27,6 +28,12 @@ void RTC_IRQHandler (void){															// Функция Вычисления
 	  Time.time[7] = ((tmp1%60)%10) |0x30;
 		RTC->CRL &=~RTC_CRL_SECF;
 		
+		count_refresh++;
+		if(count_refresh>5)
+		{
+			count_refresh=0;
+			refresh_lcd=1;
+		}
 		timesleep++;
 		if(timesleep>30)
 		{

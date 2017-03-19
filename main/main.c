@@ -7,6 +7,7 @@
 Time_Type 								Time;
 Alarm_Type 								Alarm;
 
+volatile uint8_t refresh_lcd;
 volatile BUTTON_TypeDef		button=BUTTON_DISABLE;
 extern volatile uint8_t write_flashflag;
 extern void Flash_page_erase(uint32_t address,uint8_t countpage);
@@ -28,6 +29,7 @@ void ADC1_Init (void);
 int main (void){ 
 	uint16_t count;
 	uint16_t flag=0x00A7;
+	uint8_t cmd;
 	
 	InitPerifery ();
 	ADC1_Init();
@@ -46,14 +48,12 @@ int main (void){
 	ClearLCD();}*/
 	while(1)
 	{
-		
-		NVIC->ICER[0]=NVIC_ICER_CLRENA_7|NVIC_ICER_CLRENA_9|NVIC_ICER_CLRENA_29;
-		PutChar (&Time.time[0],0x0,8);
-		if((BKP->DR1<<16|BKP->DR2)>=(RTC->CNTH<<16|RTC->CNTL))
-			PutSimvol (0xEB,0xF);
-		else 
-			PutSimvol (0x20,0xF);
-		PutChar (&Time.date[0],0x40,10);
+		if(refresh_lcd)
+		{
+			refresh_lcd=0;
+			cmd=!cmd;
+			Refresh_LCD(cmd);
+		}
 		if(TimerONOFF)
 		{
 			if(PhaseBrez)
@@ -62,15 +62,10 @@ int main (void){
 				PutSimvol('P',0x4F);
 		}
 		else
-		{
 			PutSimvol(' ',0x4F);
-		}
-		NVIC->ISER[0]=NVIC_ISER_SETENA_7|NVIC_ISER_SETENA_9|NVIC_ISER_SETENA_29;		
+		
 		if(Enable_Sleep==1) 
-		{	
-			
 			Sleepdeep();
-		}
 		if(button==BUTTON_SET) 
 			_Menu();
 		if(write_flashflag)
@@ -252,7 +247,6 @@ void InitPerifery(void){
 									RCC_APB2ENR_IOPAEN|
 									RCC_APB2ENR_IOPBEN|
 									RCC_APB2ENR_IOPCEN
-									/*RCC_APB2ENR_IOPDEN*/
 									/*RCC_APB2ENR_USART1EN*/;
 										
 	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
@@ -361,8 +355,6 @@ void InitPerifery(void){
 	
 	
 //--------------------------------------------------------------------------------------------------------------	
-	//PWR->CR |=PWR_CR_CWUF;
-						//PWR_CR_CSBF;
 	// Настроим режим STOP. По команде WFE контроллер переходит в STOP Mode. 
 	PWR->CR |=PWR_CR_LPDS;						//LPDS=1
 	PWR->CR &=~PWR_CR_PDDS;						//PDDS=0
@@ -393,11 +385,8 @@ void InitPerifery(void){
 	NVIC_SetPriority(RTC_IRQn,3);					  //Приоритет RTC=3
 	
 	NVIC_EnableIRQ(EXTI1_IRQn);
-	NVIC_SetPriority(EXTI1_IRQn,3);					//Приоритет EXTI0=3
-	
-	/*NVIC_EnableIRQ(EXTI2_IRQn);
-	NVIC_SetPriority(EXTI2_IRQn,3);	*/				//Приоритет EXTI2=3
-	
+	NVIC_SetPriority(EXTI1_IRQn,3);					//Приоритет EXTI1=3
+			
 	NVIC_EnableIRQ(EXTI3_IRQn);
 	NVIC_SetPriority(EXTI3_IRQn,3);					//Приоритет EXTI3=3
 	

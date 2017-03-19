@@ -98,7 +98,7 @@ extern 	uint8_t MX25L[];
  void BrezPhase(void);
  
  void _Menu(void);
- 
+ void Refresh_LCD(uint8_t cmd);
  void assert_failed(uint8_t* file, uint32_t line);
  void DateCalc(void);
  void AlarmCalc(void);
