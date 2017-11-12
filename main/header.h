@@ -24,9 +24,18 @@ typedef struct{
 
 typedef struct	
 {	
-	uint8_t time[8];
-	uint8_t date[10];
+	uint8_t time[5];
+	uint8_t date[8];
 } Time_Type;
+
+typedef struct	
+{	
+	uint8_t hour;
+	uint8_t minute;
+	uint8_t day;
+	uint8_t month;
+	uint8_t year;
+}RTC_Type;
 
 typedef struct 
 {	
@@ -96,6 +105,9 @@ extern 	uint8_t MX25L[];
  void SetTime_encoder(void);
  void SetAlarm_encoder(void);
  void BrezPhase(void);
+ 
+ void SetRTC(RTC_Type* rtc);
+
  
  void _Menu(void);
  void Refresh_LCD(uint8_t cmd);

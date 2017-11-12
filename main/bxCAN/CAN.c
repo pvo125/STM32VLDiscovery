@@ -251,30 +251,33 @@ void CAN_Receive_IRQHandler(uint8_t FIFONumber){
 ******************************************************************************************************************/
 void CAN_RXProcess0(void){
 	int temp;
+	RTC_Type rtc;
 	switch(CAN_Data_RX[0].FMI) {
 		case 1://(id=080 remote GET_RTC)
 		//
-		
-		CAN_Data_TX.ID=(NETNAME_INDEX<<8)|0x80;  
-		CAN_Data_TX.DLC=6;
-		CAN_Data_TX.Data[0]=NETNAME_INDEX; //netname_index для 32VLDisc
-		CAN_Data_TX.Data[1]=((Time.time[0]&0x0F)*10)+(Time.time[1]&0x0F);//  Time.hour;
-		CAN_Data_TX.Data[2]=((Time.time[3]&0x0F)*10)+(Time.time[4]&0x0F);// Time.min;
-		CAN_Data_TX.Data[3]=((Time.date[0]&0x0F)*10)+(Time.date[1]&0x0F);// Time.day;
-		CAN_Data_TX.Data[4]=((Time.date[3]&0x0F)*10)+(Time.date[4]&0x0F);// Time.month;
-		CAN_Data_TX.Data[5]=((Time.date[8]&0x0F)*10)+(Time.date[9]&0x0F);// Time.year;
-		CAN_Transmit_DataFrame(&CAN_Data_TX);
+			CAN_Data_TX.ID=(NETNAME_INDEX<<8)|0x80;  
+			CAN_Data_TX.DLC=6;
+			CAN_Data_TX.Data[0]=NETNAME_INDEX; //netname_index для 32VLDisc
+			CAN_Data_TX.Data[1]=((Time.time[0]&0x0F)*10)+(Time.time[1]&0x0F);//  Time.hour;
+			CAN_Data_TX.Data[2]=((Time.time[3]&0x0F)*10)+(Time.time[4]&0x0F);// Time.min;
+			CAN_Data_TX.Data[3]=((Time.date[0]&0x0F)*10)+(Time.date[1]&0x0F);// Time.day;
+			CAN_Data_TX.Data[4]=((Time.date[3]&0x0F)*10)+(Time.date[4]&0x0F);// Time.month;
+			CAN_Data_TX.Data[5]=((Time.date[6]&0x0F)*10)+(Time.date[7]&0x0F);// Time.year;
+			CAN_Transmit_DataFrame(&CAN_Data_TX);
 		break;
 		
 		case 2://(id=481 data set_rtc)
-		//
-		/*Time.hour=CAN_Data_RX[0].Data[1];
-		Time.min=CAN_Data_RX[0].Data[2];
-		//RTC_SetTime(RTC_Format_BIN, &RTC_Time);
-		Time.day=CAN_Data_RX[0].Data[3];
-		Time.month=CAN_Data_RX[0].Data[4];
-		Time.year=CAN_Data_RX[0].Data[5];
-		//RTC_SetDate(RTC_Format_BIN, &RTC_Date);*/
+			rtc.hour=CAN_Data_RX[0].Data[0];
+			rtc.minute=CAN_Data_RX[0].Data[1];
+			
+			rtc.day=(CAN_Data_RX[0].Data[2]/0x10)*10;
+			rtc.day+=CAN_Data_RX[0].Data[2]%0x10;
+			rtc.month=(CAN_Data_RX[0].Data[3]/0x10)*10;
+			rtc.month+=CAN_Data_RX[0].Data[3]%0x10;
+			rtc.year=(CAN_Data_RX[0].Data[4]/0x10)*10;
+			rtc.year+=CAN_Data_RX[0].Data[4]%0x10;
+			
+			SetRTC(&rtc);
 		break;
 		
 		case 3://(id=082 GET_TIMER_DATA remote )

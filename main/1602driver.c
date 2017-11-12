@@ -302,12 +302,12 @@ void Refresh_LCD(uint8_t cmd){
 	switch (cmd)
 		{	
 		case 0:
-			PutChar (&Time.time[0],0x0,8);
+			PutChar (&Time.time[0],0x0,5);
 			if((BKP->DR1<<16|BKP->DR2)>=(RTC->CNTH<<16|RTC->CNTL))
 				PutSimvol (0xEB,0xF);
 			else 	
 				PutSimvol (0x20,0xF);
-			PutChar (&Time.date[0],0x40,10);
+			PutChar (&Time.date[0],0x40,8);
 		break;
 		case 1:
 			PutText(Vin, 0x0);

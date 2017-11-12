@@ -51,8 +51,9 @@ int main (void){
 		if(refresh_lcd)
 		{
 			refresh_lcd=0;
-			cmd=!cmd;
 			Refresh_LCD(cmd);
+			cmd++;
+			if(cmd>1) cmd=0;
 		}
 		if(TimerONOFF)
 		{
@@ -365,18 +366,13 @@ void InitPerifery(void){
 	
 /* Проинициализируем ячейки памяти для отображения двоеточия и точки в изображении даты и времени*/
 	Time.time[2]=0x3A;
-	Time.time[5]=0x3A;
 	Time.date[2]=0x2E;
 	Time.date[5]=0x2E;
-	Time.date[6]=0x32;
-	Time.date[7]=0x30;
-	
+		
 	Alarm.time[2]=0x3A;
-	Alarm.time[5]=0x3A;
 	Alarm.date[2]=0x2E;
 	Alarm.date[5]=0x2E;
-	Alarm.date[6]=0x32;
-	Alarm.date[7]=0x30;
+	
 	CNT.persent=0x25;
 	Temperature[2]=0x2E;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -407,6 +403,53 @@ void InitPerifery(void){
 	
 }
 
+/******************************************************************/
+void SetRTC(RTC_Type* rtc){
+	uint32_t sec=0;
+	uint8_t leap,i;
+	uint8_t year=rtc->year;
+	uint16_t day=0;
+	
+	sec=(rtc->day-1)*86400;
+	sec+=rtc->hour*3600+rtc->minute*60;
+	
+	if (year%4!=0)
+		leap=0;
+	else
+		leap=1;
+	for (i=0;i<rtc->month;i++)
+		day+=days[leap][i];
+	while (year>0)
+	{
+		day+=366;
+		year--;
+			for(i=0;i<3;i++)
+				{
+					if (year<=0)	 break;
+					else
+					{
+						day+=365;
+						year--;
+					}
+				}
+	}
+	sec+=day*86400;
+	RTC->CRL |= RTC_CRL_CNF;																			// Установим флаг CNF для входа в режим конфигурации
+	RTC->CNTL = sec;			
+	RTC->CNTH = sec>>16;	
+	RTC->CRL &=~ RTC_CRL_CNF;																		
+	while ((RTC->CRL & RTC_CRL_RTOFF)!= RTC_CRL_RTOFF){}			// Дождемся готовности часов для записи
+	// Запишем все в соответ. ячейки памяти предварительно приведя к виду удобному для индикации 		
+	Time.date[6]=(rtc->year/10) |0x30;
+	Time.date[7]=(rtc->year%10) |0x30;
+	Time.date[3]=(rtc->month/10) |0x30;
+	Time.date[4]=(rtc->month%10) |0x30;
+	Time.date[0]=(rtc->day/10) |0x30;
+	Time.date[1]=(rtc->day%10) |0x30;	
+	
+}
+
+/************************************************************/
 void DateCalc(void){																		// Функция Вычисления даты по значению секунд 
 	int day=1, year=0,month=0, i,leap;										// с регистра RTC->CNT
 	day+=(RTC->CNTH<<16 |RTC->CNTL)/86400;
@@ -435,8 +478,8 @@ void DateCalc(void){																		// Функция Вычисления д�
 				day-=days[leap][i];
 				}
 				// Запишем все в соответ. ячейки памяти предварительно приведя к виду удобному для индикации 		
-		Time.date[8]=(year/10) |0x30;
-		Time.date[9]=(year%10) |0x30;
+		Time.date[6]=(year/10) |0x30;
+		Time.date[7]=(year%10) |0x30;
 		Time.date[3]=(month/10) |0x30;
 		Time.date[4]=(month%10) |0x30;
 		Time.date[0]=(day/10) |0x30;

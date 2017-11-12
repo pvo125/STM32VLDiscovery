@@ -24,12 +24,11 @@ void RTC_IRQHandler (void){															// Функция Вычисления
 		tmp1 =tmp%3600; 
 		Time.time[3] =((tmp1 /60)/10)|0x30;
 		Time.time[4] =((tmp1 /60)%10)|0x30;
-		Time.time[6] =(tmp1 %60)/10 | 0x30;
-	  Time.time[7] = ((tmp1%60)%10) |0x30;
+		
 		RTC->CRL &=~RTC_CRL_SECF;
 		
 		count_refresh++;
-		if(count_refresh>5)
+		if(count_refresh>1)
 		{
 			count_refresh=0;
 			refresh_lcd=1;
