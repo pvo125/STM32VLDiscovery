@@ -313,7 +313,7 @@ void Refresh_LCD(uint8_t cmd){
 			PutText(Vin, 0x0);
 			PutChar(ADC_Ch_0,0xA,5);
 			PutText(Tchip, 0x40);
-			PutChar(Temperature,0x4A,5);
+			PutChar(Temperature,0x4A,4);
 		break;	
 		}
 }

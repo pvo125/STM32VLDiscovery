@@ -8,11 +8,13 @@ Time_Type 								Time;
 Alarm_Type 								Alarm;
 
 volatile uint8_t refresh_lcd;
+volatile uint8_t refreshLCD_encoder;
 volatile BUTTON_TypeDef		button=BUTTON_DISABLE;
 extern volatile uint8_t write_flashflag;
 extern void Flash_page_erase(uint32_t address,uint8_t countpage);
 extern void Flash_prog(uint16_t * src,uint16_t * dst,uint32_t nbyte);
 
+void RefreshLCD_encoder(void);
 Count_Type 								CNT;
 
 GPIO_InitTypeDef 					GPIO_InitStruct;
@@ -54,6 +56,11 @@ int main (void){
 			Refresh_LCD(cmd);
 			cmd++;
 			if(cmd>1) cmd=0;
+		}
+		if(refreshLCD_encoder)
+		{
+			refreshLCD_encoder=0;
+			RefreshLCD_encoder();
 		}
 		if(TimerONOFF)
 		{
@@ -535,4 +542,68 @@ void AlarmCalc(void){																		// Функция Вычисления д
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------
-
+void RefreshLCD_encoder(void){
+	int16_t tmp;
+	NVIC->ICER[0]=NVIC_ICER_CLRENA_29;
+		ClearLCD();
+		if(TimerONOFF)
+		{
+			if(PhaseBrez)
+					TIM3->CNT=BrezPower;
+			else
+					TIM3->CNT=PhasePower;
+			PutText(Power,0x5);
+repeat:	
+			TIM3->SR&=~TIM_SR_CC1IF&~TIM_SR_CC1OF;
+			if(PhaseBrez==0)
+			{
+				tmp=TIM3->CNT;
+				if((tmp<=193)&&(tmp>150))
+					TIM3->CNT=0;
+				else if((tmp>96)&&(tmp<150))
+					TIM3->CNT=96;
+			
+				PhasePower=TIM3->CNT;
+				TIM2->ARR=1000-PhasePower*10;
+				TIM2->CCR2=970-PhasePower*10;
+				CNT.CNT100=PhasePower/100|0x30;	
+				CNT.CNT10=PhasePower/10|0x30;
+				CNT.CNT1=PhasePower%10|0x30;
+			}
+			else if(PhaseBrez==1)
+			{
+				tmp=TIM3->CNT;
+				if((tmp<=193)&&(tmp>150))
+						TIM3->CNT=0;
+									//else if((tmp>20)&&(tmp<50))
+									//	TIM3->CNT=20;
+				else if((tmp>100)&&(tmp<150))
+						TIM3->CNT=100;
+			
+				BrezPower=TIM3->CNT;
+				BrezKoeff=BrezPower/100.0f;
+				CNT.CNT100=BrezPower/100|0x30;
+				if(BrezPower/100)
+						CNT.CNT10=0x30;
+				else
+					CNT.CNT10=BrezPower/10|0x30;
+									
+				CNT.CNT1=BrezPower%10|0x30;
+			}
+				PutChar(&CNT.CNT100,0xC,4);
+				SysTick->LOAD=9000000;
+				SysTick->VAL=0;
+				while(!((TIM3->SR&TIM_SR_CC1IF)||(SysTick->CTRL &SysTick_CTRL_COUNTFLAG_Msk))){}
+			 	if(TIM3->SR&TIM_SR_CC1IF)
+						goto repeat;
+		}
+		else
+		{
+			PutText(Enable_Method,0x1);
+			TIM3->SR&=~(TIM_SR_CC1IF|TIM_SR_CC1OF);
+			Delay(1000000);
+		}
+		NVIC->ICPR[0]=NVIC_ICPR_CLRPEND_29;
+		NVIC->ISER[0]=NVIC_ISER_SETENA_29;
+		ClearLCD();
+}

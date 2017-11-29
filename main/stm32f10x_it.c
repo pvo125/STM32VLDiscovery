@@ -6,6 +6,7 @@ extern Time_Type 									Time;
 extern volatile BUTTON_TypeDef		button;
 extern Count_Type 								CNT;
 
+extern volatile uint8_t refreshLCD_encoder;
 extern volatile uint8_t refresh_lcd;
 volatile uint8_t timesleep=0;	
 
@@ -108,69 +109,10 @@ void TIM2_IRQHandler (void){
 }
 
 void TIM3_IRQHandler (void){
-				int16_t tmp;
-				ClearLCD();
-				if(TimerONOFF)
-				{
-					if(PhaseBrez)
-						TIM3->CNT=BrezPower;
-					else
-						TIM3->CNT=PhasePower;
-					
-					PutText(Power,0x5);
-repeat:	
-				TIM3->SR&=~TIM_SR_CC1IF&~TIM_SR_CC1OF;
-				if(PhaseBrez==0)
-					{
-						tmp=TIM3->CNT;
-						if((tmp<=193)&&(tmp>150))
-							TIM3->CNT=0;
-						else if((tmp>96)&&(tmp<150))
-							TIM3->CNT=96;
-						
-						PhasePower=TIM3->CNT;
-						TIM2->ARR=1000-PhasePower*10;
-						TIM2->CCR2=970-PhasePower*10;
-						CNT.CNT100=PhasePower/100|0x30;	
-						CNT.CNT10=PhasePower/10|0x30;
-						CNT.CNT1=PhasePower%10|0x30;
-					 }
-					else if(PhaseBrez==1)
-						{
-							tmp=TIM3->CNT;
-								if((tmp<=193)&&(tmp>150))
-										TIM3->CNT=0;
-									//else if((tmp>20)&&(tmp<50))
-									//	TIM3->CNT=20;
-									else if((tmp>100)&&(tmp<150))
-											TIM3->CNT=100;
-										
-									BrezPower=TIM3->CNT;
-									BrezKoeff=BrezPower/100.0f;
-									
-									CNT.CNT100=BrezPower/100|0x30;
-									if(BrezPower/100)
-										CNT.CNT10=0x30;
-									else
-										CNT.CNT10=BrezPower/10|0x30;
-									
-									CNT.CNT1=BrezPower%10|0x30;
-							}
-				PutChar(&CNT.CNT100,0xC,4);
-				SysTick->LOAD=9000000;
-				SysTick->VAL=0;
-				while(!((TIM3->SR&TIM_SR_CC1IF)||(SysTick->CTRL &SysTick_CTRL_COUNTFLAG_Msk))){}
-			 	if(TIM3->SR&TIM_SR_CC1IF)
-						goto repeat;
-			}
-				else
-				{PutText(Enable_Method,0x1);
-				 TIM3->SR&=~(TIM_SR_CC1IF|TIM_SR_CC1OF);
-				 Delay(1000000);}
-				NVIC->ICPR[0]=NVIC_ICPR_CLRPEND_29;
-				ClearLCD();
-
-	
+				
+	TIM3->SR &=~TIM_SR_CC1IF;	
+	NVIC->ICPR[0]=NVIC_ICPR_CLRPEND_29;
+	refreshLCD_encoder=1;		
 }
 
 
